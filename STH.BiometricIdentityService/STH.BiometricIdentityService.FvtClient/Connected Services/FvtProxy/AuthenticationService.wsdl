@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://hitachisoft.jp/aug/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://hitachisoft.jp/aug/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://hitachisoft.jp/aug/">
+      <s:element name="Remove">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RemoveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RemoveResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AuthenticationResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Result" type="tns:AuthenticationResultCode" />
+          <s:element minOccurs="1" maxOccurs="1" name="FvCoreReturnCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="sUUIDs" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReturnMessage" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="nMatches" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AuthenticationResultCode">
+        <s:restriction base="s:string">
+          <s:enumeration value="Succeed" />
+          <s:enumeration value="Failed" />
+          <s:enumeration value="UserNotFound" />
+          <s:enumeration value="NotMatched" />
+          <s:enumeration value="Duplicate" />
+          <s:enumeration value="MultipleMatched" />
+          <s:enumeration value="InvalidUUID" />
+          <s:enumeration value="InvalidEnrolTemplate" />
+          <s:enumeration value="InvalidVerifyTemplate" />
+          <s:enumeration value="DuplicateUUID" />
+          <s:enumeration value="UnauthorisedClientRequest" />
+          <s:enumeration value="InternalFVAEError" />
+          <s:enumeration value="TimebombRecoveryInProgress" />
+          <s:enumeration value="EnrollDuplicateHasBeenRemoved" />
+          <s:enumeration value="LicenceExpired" />
+          <s:enumeration value="ServerStartupError" />
+          <s:enumeration value="NoEnrolledUsers" />
+          <s:enumeration value="TooManyTemplates" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DeleteAllUsers">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeleteAllUsersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteAllUsersResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Verify">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="template" type="tns:VerifyTemplate" />
+            <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="VerifyTemplate">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="template" type="s:base64Binary" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="VerifyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="VerifyResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Enrol">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="fBackupPresent" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="etTemplate" type="tns:EnrolTemplate" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="EnrolTemplate">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Version" type="tns:TemplateVersion" />
+          <s:element minOccurs="1" maxOccurs="1" name="primaryHand" type="tns:Hand" />
+          <s:element minOccurs="1" maxOccurs="1" name="backupHand" type="tns:Hand" />
+          <s:element minOccurs="1" maxOccurs="1" name="primaryFinger" type="tns:Finger" />
+          <s:element minOccurs="1" maxOccurs="1" name="backupFinger" type="tns:Finger" />
+          <s:element minOccurs="0" maxOccurs="1" name="primaryEnrolTemplate" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="primaryVerifyTemplate" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="backupEnrolTemplate" type="s:base64Binary" />
+          <s:element minOccurs="0" maxOccurs="1" name="backupVerifyTemplate" type="s:base64Binary" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="TemplateVersion">
+        <s:restriction base="s:string">
+          <s:enumeration value="Primary" />
+          <s:enumeration value="Backup" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="Hand">
+        <s:restriction base="s:string">
+          <s:enumeration value="Right" />
+          <s:enumeration value="Left" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="Finger">
+        <s:restriction base="s:string">
+          <s:enumeration value="PointerFinger" />
+          <s:enumeration value="MiddleFinger" />
+          <s:enumeration value="RingFinger" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="EnrolResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EnrolResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReEnrol">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="fBackupPresent" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="etTemplate" type="tns:EnrolTemplate" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReEnrolResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ReEnrolResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Identify">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="template" type="tns:VerifyTemplate" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IdentifyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IdentifyResult" type="tns:AuthenticationResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUsers">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetUsersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetUsersResult" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nUsers" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="sUUIDs" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserTransactions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateStart" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserTransactionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetUserTransactionsResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="aTransactions" type="tns:ArrayOfTransactionLog" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfTransactionLog">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="TransactionLog" nillable="true" type="tns:TransactionLog" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="TransactionLog">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="sTimestamp" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="sUUID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="sType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="sStatus" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="sMessage" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetVersion">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetVersionResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDatas" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetLicence">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sLicence" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetLicenceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SetLicenceResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTransactions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sDateStart" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTransactionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetTransactionsResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="aTransactions" type="tns:ArrayOfTransactionLog" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteTransactionLog">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sDateStart" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteTransactionLogResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="DeleteTransactionLogResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIdMetrics">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sDateStart" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIdMetricsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetIdMetricsResult" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nAttempts" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nsuccesses" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nMultiples" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nNotMatched" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nFailures" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVerMetrics">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sDateStart" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sDateEnd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVerMetricsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetVerMetricsResult" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nAttempts" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nsuccesses" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nMultiples" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nNoMatchs" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="nFailures" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="RemoveSoapIn">
+    <wsdl:part name="parameters" element="tns:Remove" />
+  </wsdl:message>
+  <wsdl:message name="RemoveSoapOut">
+    <wsdl:part name="parameters" element="tns:RemoveResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteAllUsersSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteAllUsers" />
+  </wsdl:message>
+  <wsdl:message name="DeleteAllUsersSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteAllUsersResponse" />
+  </wsdl:message>
+  <wsdl:message name="VerifySoapIn">
+    <wsdl:part name="parameters" element="tns:Verify" />
+  </wsdl:message>
+  <wsdl:message name="VerifySoapOut">
+    <wsdl:part name="parameters" element="tns:VerifyResponse" />
+  </wsdl:message>
+  <wsdl:message name="EnrolSoapIn">
+    <wsdl:part name="parameters" element="tns:Enrol" />
+  </wsdl:message>
+  <wsdl:message name="EnrolSoapOut">
+    <wsdl:part name="parameters" element="tns:EnrolResponse" />
+  </wsdl:message>
+  <wsdl:message name="ReEnrolSoapIn">
+    <wsdl:part name="parameters" element="tns:ReEnrol" />
+  </wsdl:message>
+  <wsdl:message name="ReEnrolSoapOut">
+    <wsdl:part name="parameters" element="tns:ReEnrolResponse" />
+  </wsdl:message>
+  <wsdl:message name="IdentifySoapIn">
+    <wsdl:part name="parameters" element="tns:Identify" />
+  </wsdl:message>
+  <wsdl:message name="IdentifySoapOut">
+    <wsdl:part name="parameters" element="tns:IdentifyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUsersSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUsers" />
+  </wsdl:message>
+  <wsdl:message name="GetUsersSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUsersResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserTransactionsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserTransactions" />
+  </wsdl:message>
+  <wsdl:message name="GetUserTransactionsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserTransactionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVersion" />
+  </wsdl:message>
+  <wsdl:message name="GetVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetLicenceSoapIn">
+    <wsdl:part name="parameters" element="tns:SetLicence" />
+  </wsdl:message>
+  <wsdl:message name="SetLicenceSoapOut">
+    <wsdl:part name="parameters" element="tns:SetLicenceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTransactionsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTransactions" />
+  </wsdl:message>
+  <wsdl:message name="GetTransactionsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTransactionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteTransactionLogSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteTransactionLog" />
+  </wsdl:message>
+  <wsdl:message name="DeleteTransactionLogSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteTransactionLogResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIdMetricsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIdMetrics" />
+  </wsdl:message>
+  <wsdl:message name="GetIdMetricsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIdMetricsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVerMetricsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVerMetrics" />
+  </wsdl:message>
+  <wsdl:message name="GetVerMetricsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVerMetricsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="AuthenticationServiceSoap">
+    <wsdl:operation name="Remove">
+      <wsdl:input message="tns:RemoveSoapIn" />
+      <wsdl:output message="tns:RemoveSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllUsers">
+      <wsdl:input message="tns:DeleteAllUsersSoapIn" />
+      <wsdl:output message="tns:DeleteAllUsersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Verify">
+      <wsdl:input message="tns:VerifySoapIn" />
+      <wsdl:output message="tns:VerifySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Enrol">
+      <wsdl:input message="tns:EnrolSoapIn" />
+      <wsdl:output message="tns:EnrolSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ReEnrol">
+      <wsdl:input message="tns:ReEnrolSoapIn" />
+      <wsdl:output message="tns:ReEnrolSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Identify">
+      <wsdl:input message="tns:IdentifySoapIn" />
+      <wsdl:output message="tns:IdentifySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUsers">
+      <wsdl:input message="tns:GetUsersSoapIn" />
+      <wsdl:output message="tns:GetUsersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserTransactions">
+      <wsdl:input message="tns:GetUserTransactionsSoapIn" />
+      <wsdl:output message="tns:GetUserTransactionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVersion">
+      <wsdl:input message="tns:GetVersionSoapIn" />
+      <wsdl:output message="tns:GetVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetLicence">
+      <wsdl:input message="tns:SetLicenceSoapIn" />
+      <wsdl:output message="tns:SetLicenceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTransactions">
+      <wsdl:input message="tns:GetTransactionsSoapIn" />
+      <wsdl:output message="tns:GetTransactionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteTransactionLog">
+      <wsdl:input message="tns:DeleteTransactionLogSoapIn" />
+      <wsdl:output message="tns:DeleteTransactionLogSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIdMetrics">
+      <wsdl:input message="tns:GetIdMetricsSoapIn" />
+      <wsdl:output message="tns:GetIdMetricsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVerMetrics">
+      <wsdl:input message="tns:GetVerMetricsSoapIn" />
+      <wsdl:output message="tns:GetVerMetricsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AuthenticationServiceSoap" type="tns:AuthenticationServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Remove">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/Remove" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllUsers">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/DeleteAllUsers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Verify">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/Verify" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Enrol">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/Enrol" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReEnrol">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/ReEnrol" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Identify">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/Identify" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUsers">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetUsers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserTransactions">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetUserTransactions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVersion">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetLicence">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/SetLicence" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTransactions">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetTransactions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteTransactionLog">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/DeleteTransactionLog" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIdMetrics">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetIdMetrics" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVerMetrics">
+      <soap:operation soapAction="http://hitachisoft.jp/aug/GetVerMetrics" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="AuthenticationServiceSoap12" type="tns:AuthenticationServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Remove">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/Remove" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllUsers">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/DeleteAllUsers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Verify">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/Verify" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Enrol">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/Enrol" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReEnrol">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/ReEnrol" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Identify">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/Identify" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUsers">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetUsers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserTransactions">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetUserTransactions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVersion">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetVersion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetLicence">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/SetLicence" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTransactions">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetTransactions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteTransactionLog">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/DeleteTransactionLog" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIdMetrics">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetIdMetrics" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVerMetrics">
+      <soap12:operation soapAction="http://hitachisoft.jp/aug/GetVerMetrics" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AuthenticationService">
+    <wsdl:port name="AuthenticationServiceSoap" binding="tns:AuthenticationServiceSoap">
+      <soap:address location="http://fvt.dev.v3.sthaler.io/FVTServer/AuthenticationService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="AuthenticationServiceSoap12" binding="tns:AuthenticationServiceSoap12">
+      <soap12:address location="http://fvt.dev.v3.sthaler.io/FVTServer/AuthenticationService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
