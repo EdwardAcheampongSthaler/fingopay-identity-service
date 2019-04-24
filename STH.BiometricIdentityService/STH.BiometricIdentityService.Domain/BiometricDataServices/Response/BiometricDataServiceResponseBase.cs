@@ -1,6 +1,6 @@
 ﻿namespace STH.BiometricIdentityService.Domain.BiometricDataServices.Response
 {
-    public class BiometricDataServiceResponseBase
+    public class ResponseBase
     {
         public string Message { get; set; }
         public bool Success { get; set; }

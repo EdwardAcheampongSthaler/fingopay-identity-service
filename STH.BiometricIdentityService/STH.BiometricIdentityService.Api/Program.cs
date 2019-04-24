@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Configuration;
+using System.Net.Http;
 using Microsoft.Owin.Hosting;
 
 namespace STH.BiometricIdentityService.Api
@@ -7,7 +8,9 @@ namespace STH.BiometricIdentityService.Api
     {
         static void Main(string[] args)
         {
-			            string baseAddress = "http://localhost:9001/";
+
+            
+            string baseAddress = ConfigurationManager.AppSettings["General.BaseAddress"];
 
             // Start OWIN host 
             using (WebApp.Start<Startup>(url: baseAddress))

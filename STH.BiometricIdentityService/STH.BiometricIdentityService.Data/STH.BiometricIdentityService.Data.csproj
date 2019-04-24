@@ -41,12 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\AccountBiometric.cs" />
+    <Compile Include="Entity\AccountPaymentOption.cs" />
+    <Compile Include="Entity\Biometric.cs" />
+    <Compile Include="Entity\Account.cs" />
+    <Compile Include="Entity\PaymentOption.cs" />
+    <Compile Include="Entity\Transaction.cs" />
+    <Compile Include="Entity\TransactionType.cs" />
+    <Compile Include="Interfaces\IBiometricIdentityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\BiometricIdentityRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entity\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Repositories\" />
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace STH.BiometricIdentityService.Domain.BiometricDataServices.Response
 {
-    public class BiometricDataDeletionResponse:BiometricDataServiceResponseBase
+    public class BiometricDataDeletionResponse:ResponseBase
     {
 
     }

@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BiometricDataServices\Request\BiometricDataDeletionRequest.cs" />
+    <Compile Include="BiometricDataServices\Request\MakePaymentRequest.cs" />
+    <Compile Include="BiometricDataServices\Request\RefundPaymentRequest.cs" />
     <Compile Include="BiometricDataServices\Response\BiometricDataDeletionResponse.cs" />
     <Compile Include="BiometricDataServices\Request\BiometricDataEnrollmentRequest.cs" />
     <Compile Include="BiometricDataServices\Request\BiometricDataIdentificationRequest.cs" />
@@ -53,10 +55,22 @@
     <Compile Include="BiometricDataServices\Response\BiometricDataVerificationResponse.cs" />
     <Compile Include="BiometricDataServices\Response\BiometricDataEnrollmentResponse.cs" />
     <Compile Include="BiometricDataServices\BiometricDataService.cs" />
+    <Compile Include="BiometricDataServices\Response\MakePaymentResponse.cs" />
+    <Compile Include="BiometricDataServices\Response\RefundPaymentResponse.cs" />
+    <Compile Include="PaymentService\CardStreamPaymentService.cs" />
     <Compile Include="Interfaces\IBiometricDataService.cs" />
+    <Compile Include="PaymentService\Interfaces\IPaymentService.cs" />
+    <Compile Include="PaymentService\Request\MakePaymentRequest.cs" />
+    <Compile Include="PaymentService\Request\RefundPaymentRequest.cs" />
+    <Compile Include="PaymentService\Response\MakePaymentResponse.cs" />
+    <Compile Include="PaymentService\Response\RefundPaymentResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\STH.BiometricIdentityService.Data\STH.BiometricIdentityService.Data.csproj">
+      <Project>{2EB8C0D0-0233-45FE-99DF-47409C988DF6}</Project>
+      <Name>STH.BiometricIdentityService.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\STH.BiometricIdentityService.FvtClient\STH.BiometricIdentityService.FvtClient.csproj">
       <Project>{560C2058-B385-4A1C-B17E-F2F2CF62438C}</Project>
       <Name>STH.BiometricIdentityService.FvtClient</Name>

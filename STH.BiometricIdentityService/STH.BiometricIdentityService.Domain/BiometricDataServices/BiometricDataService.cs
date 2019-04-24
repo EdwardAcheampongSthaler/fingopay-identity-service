@@ -1,4 +1,6 @@
-﻿using STH.BiometricIdentityService.Domain.BiometricDataServices.Request;
+﻿using System.Net;
+using STH.BiometricIdentityService.Data.Interfaces;
+using STH.BiometricIdentityService.Domain.BiometricDataServices.Request;
 using STH.BiometricIdentityService.Domain.BiometricDataServices.Response;
 using STH.BiometricIdentityService.Domain.Interfaces;
 using STH.BiometricIdentityService.FvtClient.Interfaces;
@@ -8,22 +10,45 @@ namespace STH.BiometricIdentityService.Domain.BiometricDataServices
     public class FvtBiometricDataService : IBiometricDataService
     {
         private readonly IFvtClientRepository _fvtServerRepository;
+        private readonly IBiometricIdentityRepository _biometricIdentityRepository;
 
-        public FvtBiometricDataService(IFvtClientRepository fvtServerRepository )
+        public FvtBiometricDataService(IFvtClientRepository fvtServerRepository, 
+            IBiometricIdentityRepository biometricIdentityRepository)
         {
             _fvtServerRepository = fvtServerRepository;
+            _biometricIdentityRepository = biometricIdentityRepository;
         }
 
         public BiometricDataEnrollmentResponse Enroll(BiometricDataEnrollmentRequest request)
         {
-            var result = _fvtServerRepository.Enroll(request.Uuid, request.Data);
-            if (result == null) return new BiometricDataEnrollmentResponse();
-            return new BiometricDataEnrollmentResponse()
+            var result = _fvtServerRepository.Enroll(request.Uuid, request.eTemplate, request.vTemplate);
+
+            if ((result == null)|| (result?.Data == null) || (result?.Success == false)){
+                return new BiometricDataEnrollmentResponse()
+                {
+                    Success = false,
+                    Message = "Unable to enroll user. See server logs.",
+                    StatusCode = (int) HttpStatusCode.InternalServerError
+                };
+            }
+
+            // enrolled biometric record - add to database against request account.
+            var response = _biometricIdentityRepository.AddBiometricUuidToAccount(request.AccountId, result.Uuid);
+            if(response == null) return new BiometricDataEnrollmentResponse()
             {
-                Success = result.Success,
-                Message = result.Message,
-                StatusCode = result.StatusCode
+                Success = false,
+                Message = "Unable to link biometric to user account. See server logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError
             };
+
+
+            return new BiometricDataEnrollmentResponse()
+                {
+                    Account = response.Account,
+                    Success = result.Success,
+                    Message = result.Message,
+                    StatusCode = result.StatusCode
+                };
         }
 
         public BiometricDataReEnrollmentResponse ReEnroll(BiometricDataReEnrollmentRequest request)
@@ -46,7 +71,8 @@ namespace STH.BiometricIdentityService.Domain.BiometricDataServices
             {
                 Success = result.Success,
                 Message = result.Message,
-                StatusCode = result.StatusCode
+                StatusCode = result.StatusCode,
+                Uuid = result.Uuid
             };
         }
 
@@ -74,4 +100,5 @@ namespace STH.BiometricIdentityService.Domain.BiometricDataServices
             };
         }
     }
+
 }

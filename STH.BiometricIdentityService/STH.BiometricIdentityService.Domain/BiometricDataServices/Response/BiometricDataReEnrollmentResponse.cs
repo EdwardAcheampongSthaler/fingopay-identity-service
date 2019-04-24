@@ -1,6 +1,6 @@
 ﻿namespace STH.BiometricIdentityService.Domain.BiometricDataServices.Response
 {
-    public class BiometricDataReEnrollmentResponse : BiometricDataServiceResponseBase
+    public class BiometricDataReEnrollmentResponse : ResponseBase
     {
     }
 }

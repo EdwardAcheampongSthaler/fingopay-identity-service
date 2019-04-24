@@ -9,8 +9,12 @@ using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Owin;
+using STH.BiometricIdentityService.Data.Interfaces;
+using STH.BiometricIdentityService.Data.Repositories;
 using STH.BiometricIdentityService.Domain.BiometricDataServices;
 using STH.BiometricIdentityService.Domain.Interfaces;
+using STH.BiometricIdentityService.Domain.PaymentService;
+using STH.BiometricIdentityService.Domain.PaymentService.Interfaces;
 using STH.BiometricIdentityService.FvtClient;
 using STH.BiometricIdentityService.FvtClient.Interfaces;
 using STH.BiometricIdentityService.Infrastructure.Utilities.ApiConfiguration;
@@ -40,6 +44,11 @@ namespace STH.BiometricIdentityService.Api
 
             // #Support Terminals desire for XML or JSON Interfaces - formatters
             config.Formatters.Clear();
+
+            // Add support for binary array formatter
+            //config.Formatters.Add(new BsonMediaTypeFormatter());
+
+
             config.Formatters.Add(new JsonMediaTypeFormatter());
             // remove the nulls fields from appearing
             config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings
@@ -74,7 +83,7 @@ namespace STH.BiometricIdentityService.Api
                 // hold additional metadata for an API. Version and title are required but you can also provide
                 // additional fields by chaining methods off SingleApiVersion.
                 //
-                c.SingleApiVersion("v1", "STH.ClientAgentService.Console");
+                c.SingleApiVersion("v1", "Fingopay PoS Terminal Biometric Services");
 
                 // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                 //
@@ -304,32 +313,13 @@ namespace STH.BiometricIdentityService.Api
 
             // Register the Web API controllers.
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            //builder.Register(c => new Logger()).As<ILogger>().InstancePerRequest();  // Register a logger service to be used by the controller and middleware.
-            //builder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
-            //builder.RegisterType<ApplicationSecurityService>().As<IApplicationSecurityService>().InstancePerLifetimeScope();
-            //builder.RegisterType<BiometricControllerService>().As<IBiometricControllerService>().InstancePerLifetimeScope();
-            //builder.RegisterType<BiometricDeviceController>().As<IBiometricDeviceController>().InstancePerLifetimeScope();
-            //builder.RegisterType<BiometricDeviceConfigurationData>().As<IBiometricDeviceConfigurationData>().InstancePerLifetimeScope();
-            //builder.RegisterType<BiometricEngineServiceClient>().As<IBiometricEngineServiceClient>().InstancePerLifetimeScope();
-            //builder.RegisterType<EndOfBusinessService>().As<IEndOfBusinessService>().InstancePerLifetimeScope();
-            //builder.RegisterType<GenericHttpClientWrapper>().As<IHttpClientWrapper>().InstancePerLifetimeScope();
-            //builder.RegisterType<FvtServerRepository>().As<IFvtServerRepository>()
-            //  .WithParameter(new TypedParameter(typeof(ChannelFactory<AuthenticationServiceSoapChannel>)), new AuthenticationServiceSoapChannel())
-            //.InstancePerLifetimeScope();
-
-            //builder.RegisterType<FvtServerRepository>().As<IFvtServerRepository>().InstancePerLifetimeScope();
-
-            // builder.RegisterType<ChannelFactory<AuthenticationServiceSoapChannel>>().
-            //new ChannelFactory<AuthenticationServiceSoapChannel>().InstancePerLifetimeScope();
-            //IClientChannelWrapper<IMessageServiceAsync> service = new ClientChannelWrapper<IMessageServiceAsync>("BasicHttpBinding_IMessageEndpoint");
             builder.RegisterType<FvtBiometricDataService>().As<IBiometricDataService>().InstancePerLifetimeScope();
             builder.RegisterType<FvtClientRepository>().As<IFvtClientRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<CardStreamPaymentService>().As<IPaymentService>().InstancePerLifetimeScope();
+            builder.RegisterType<BiometricIdentityRepository>().As<IBiometricIdentityRepository>().InstancePerLifetimeScope();
 
             builder
-                .Register(c => new ChannelFactory<IAuthenticationServiceSoap>(
-                    new BasicHttpBinding(),
-                    new EndpointAddress("http://fvt.dev.v3.sthaler.io/FVTServer/AuthenticationService.asmx")))
-                .SingleInstance();
+                .Register(c => new ChannelFactory<IAuthenticationServiceSoap>("*")).SingleInstance();
 
             builder
                 .Register(c => c.Resolve<ChannelFactory<IAuthenticationServiceSoap>>().CreateChannel())

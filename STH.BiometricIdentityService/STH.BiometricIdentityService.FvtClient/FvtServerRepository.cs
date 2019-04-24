@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using STH.BiometricIdentityService.FvtClient.FvtProxy;
@@ -11,46 +12,33 @@ namespace STH.BiometricIdentityService.FvtClient
     public class FvtClientRepository : IFvtClientRepository
     {
         private readonly IAuthenticationServiceSoap _authenticationServiceSoap;
-        private readonly ChannelFactory<AuthenticationServiceSoapChannel> _authenticationServiceSoapFactory;
-        private readonly AuthenticationServiceSoapChannel _channel;
-        private readonly AuthenticationServiceSoapClient _client;
-
-       //  public FvtServerRepository(IAuthenticationServiceSoap authenticationServiceSoap)
-       //// public FvtServerRepository()
-       // {
-       //     _authenticationServiceSoap = authenticationServiceSoap;
-        
-            
-       //     // _channelFactory = channelFactory;
-       //    //   _client = new AuthenticationServiceSoapClient(new BasicHttpBinding(),
-       //    //      new EndpointAddress("http://fvt.dev.v3.sthaler.io/FVTServer/AuthenticationService.asmx"));
-            
-       // }
 
         public FvtClientRepository(IAuthenticationServiceSoap authenticationServiceSoap)
         {
+
             _authenticationServiceSoap = authenticationServiceSoap;
         }
 
-        public BiometricFvtResult Enroll(Guid uuid, byte[] data)
+        public BiometricFvtResult Enroll(string uuid, byte[] eTemplate, byte[] vTemplate)
         {
+
             var result = _authenticationServiceSoap.Enrol(new EnrolRequest()
             {
                 Body = new EnrolRequestBody()
                 {
                     fBackupPresent = false,
-                    sUUID = uuid.ToString(),
+                    sUUID = uuid,
                     etTemplate = new EnrolTemplate()
                     {
                         Version = TemplateVersion.Primary,
-                        primaryHand = Hand.Right,
+                        primaryHand = Hand.Left,
                         backupHand = Hand.Left,
-                        primaryFinger = Finger.PointerFinger,
+                        primaryFinger = Finger.MiddleFinger,
                         backupFinger = Finger.MiddleFinger,
-                        primaryEnrolTemplate = data,
-                        backupVerifyTemplate = data,
-                        primaryVerifyTemplate = data,
-                        backupEnrolTemplate = data
+                        primaryEnrolTemplate = eTemplate,
+                        backupEnrolTemplate = eTemplate,
+                        primaryVerifyTemplate = vTemplate,
+                        backupVerifyTemplate = vTemplate
                     }
                 }
             });
@@ -59,9 +47,10 @@ namespace STH.BiometricIdentityService.FvtClient
             {
                 return new BiometricFvtResult()
                 {
-                    Success = true,
-                    Uuid = uuid,
-                    Message = "Success",
+                    Success = result.Body.EnrolResult.Result == AuthenticationResultCode.Succeed,
+                    Uuid = (result.Body.EnrolResult.nMatches > 0 )? 
+                        result.Body.EnrolResult.sUUIDs.First() : uuid,
+                    Message = result.Body.EnrolResult.ReturnMessage,
                     StatusCode = (int)HttpStatusCode.OK,
                     Data = result.Body.EnrolResult
                 };
@@ -70,20 +59,20 @@ namespace STH.BiometricIdentityService.FvtClient
             return new BiometricFvtResult()
             {
                 Success = false,
-                Message = "No Match",
-                StatusCode = 500,
+                Message = $"[ERROR] - FVT Query #Enroll# - Result was Null - Unable to Enroll. Check FVT Server Logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Uuid = uuid
             };
         }
 
-        public BiometricFvtResult ReEnroll(Guid uuid, byte[] data)
+        public BiometricFvtResult ReEnroll(string uuid, byte[] data)
         {
             var result = _authenticationServiceSoap.ReEnrol(new ReEnrolRequest()
             {
                 Body = new ReEnrolRequestBody()
                 {
                     fBackupPresent = false,
-                    sUUID = uuid.ToString(),
+                    sUUID = uuid,
                     etTemplate = new EnrolTemplate()
                     {
                         Version = TemplateVersion.Primary,
@@ -103,9 +92,10 @@ namespace STH.BiometricIdentityService.FvtClient
             {
                 return new BiometricFvtResult()
                 {
-                    Success = true,
-                    Uuid = uuid,
-                    Message = "Success",
+                    Success = result.Body.ReEnrolResult.Result == AuthenticationResultCode.Succeed,
+                    Uuid = (result.Body.ReEnrolResult.nMatches > 0) ?
+                        result.Body.ReEnrolResult.sUUIDs.First() : string.Empty,
+                    Message = result.Body.ReEnrolResult.ReturnMessage,
                     StatusCode = (int)HttpStatusCode.OK,
                     Data = result.Body.ReEnrolResult
                 };
@@ -114,15 +104,15 @@ namespace STH.BiometricIdentityService.FvtClient
             return new BiometricFvtResult()
             {
                 Success = false,
-                Message = "No Match",
-                StatusCode = 500,
+                Message = $"[ERROR] - FVT Query #ReEnroll# - Result was Null - Unable to ReEnroll. Check FVT Server Logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Uuid = uuid
             };
         }
 
         public BiometricFvtResult Identify(byte[] data)
         {
-            var uuid = Guid.NewGuid();
+            var uuid = Guid.NewGuid().ToString();
             var result = _authenticationServiceSoap.Identify(new IdentifyRequest()
             {
                 Body = new IdentifyRequestBody()
@@ -138,30 +128,31 @@ namespace STH.BiometricIdentityService.FvtClient
             {
                 return new BiometricFvtResult()
                 {
-                    Success = true,
-                    Uuid = uuid,
-                    Message = "Success",
+                    Success = result.Body.IdentifyResult.Result == AuthenticationResultCode.Succeed,
+                    Uuid = (result.Body.IdentifyResult.nMatches > 0) ?
+                        result.Body.IdentifyResult.sUUIDs.First() : string.Empty,
+                    Message = result.Body.IdentifyResult.ReturnMessage,
                     StatusCode = (int)HttpStatusCode.OK,
                     Data = result.Body.IdentifyResult
                 };
             }
 
+
             return new BiometricFvtResult()
             {
                 Success = false,
-                Message = "No Match",
-                StatusCode = 500,
+                Message = $"[ERROR] - FVT Query #Identify# - Result was Null - Unable to perform Identify. Check FVT Server Logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Uuid = uuid
             };
         }
 
-        public BiometricFvtResult Verify(Guid uuid, byte[] data)
+        public BiometricFvtResult Verify(string uuid, byte[] data)
         {
             var result = _authenticationServiceSoap.Verify(new VerifyRequest()
             {
                 Body = new VerifyRequestBody()
                 {
-                    sUUID = uuid.ToString(),
                     template = new VerifyTemplate()
                     {
                         template = data
@@ -173,30 +164,32 @@ namespace STH.BiometricIdentityService.FvtClient
             {
                 return new BiometricFvtResult()
                 {
-                    Success = true,
-                    Uuid = uuid,
-                    Message = "Success",
+                    Success = result.Body.VerifyResult.Result == AuthenticationResultCode.Succeed,
+                    Uuid = (result.Body.VerifyResult.sUUIDs.Count > 0) ?
+                        result.Body.VerifyResult.sUUIDs.First() : string.Empty,
+                    Message = result.Body.VerifyResult.ReturnMessage,
                     StatusCode = (int)HttpStatusCode.OK,
                     Data = result.Body.VerifyResult
                 };
             }
 
+
             return new BiometricFvtResult()
             {
                 Success = false,
-                Message = "No Match",
-                StatusCode = 500,
+                Message = $"[ERROR] - FVT Query #Verify# - Result was Null - Unable to perform Verify. Check FVT Server Logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Uuid = uuid
             };
         }
 
-        public BiometricFvtResult Delete(Guid uuid)
+        public BiometricFvtResult Delete(string uuid)
         {
             var result = _authenticationServiceSoap.Remove(new RemoveRequest()
             {
                 Body = new RemoveRequestBody()
                 {
-                    sUUID = uuid.ToString(),
+                    sUUID = uuid,
                 }
             });
 
@@ -204,19 +197,21 @@ namespace STH.BiometricIdentityService.FvtClient
             {
                 return new BiometricFvtResult()
                 {
-                    Success = true,
-                    Uuid = uuid,
-                    Message = "Success",
+                    Success = result.Body.RemoveResult.Result == AuthenticationResultCode.Succeed,
+                    Uuid = (result.Body.RemoveResult.nMatches > 0) ?
+                        result.Body.RemoveResult.sUUIDs.First() : string.Empty,
+                    Message = result.Body.RemoveResult.ReturnMessage,
                     StatusCode = (int)HttpStatusCode.OK,
                     Data = result.Body.RemoveResult
                 };
             }
 
+
             return new BiometricFvtResult()
             {
                 Success = false,
-                Message = "No Match",
-                StatusCode = 500,
+                Message = $"[ERROR] - FVT Query #Delete# - Result was Null - Unable to perform Delete. Check FVT Server Logs.",
+                StatusCode = (int)HttpStatusCode.InternalServerError,
                 Uuid = uuid
             };
         }
@@ -226,7 +221,7 @@ namespace STH.BiometricIdentityService.FvtClient
             throw new NotImplementedException();
         }
 
-        public BiometricServiceTransactionLogResult GetUserTransactions(Guid uuid, DateTime startDate, DateTime endDate)
+        public BiometricServiceTransactionLogResult GetUserTransactions(string uuid, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }

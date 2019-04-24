@@ -6,14 +6,14 @@ namespace STH.BiometricIdentityService.FvtClient.Interfaces
 {
     public interface IFvtClientRepository
     {
-        BiometricFvtResult Enroll(Guid uuid, byte[] data);
-        BiometricFvtResult ReEnroll(Guid uuid, byte[] data);
+        BiometricFvtResult Enroll(string uuid, byte[] eTemplate, byte[] vTemplate);
+        BiometricFvtResult ReEnroll(string uuid, byte[] data);
         BiometricFvtResult Identify(byte[] data);
-        BiometricFvtResult Verify(Guid uuid, byte[] data);
-        BiometricFvtResult Delete(Guid uuid);
+        BiometricFvtResult Verify(string uuid, byte[] data);
+        BiometricFvtResult Delete(string uuid);
 
         BiometricServiceTransactionLogResult GetTransactions(DateTime startDate, DateTime endDate);
-        BiometricServiceTransactionLogResult GetUserTransactions(Guid uuid, DateTime startDate, DateTime endDate);
+        BiometricServiceTransactionLogResult GetUserTransactions(string uuid, DateTime startDate, DateTime endDate);
         bool DeleteTransactionLog(DateTime startDate, DateTime endDate);
         GetMetricsResult GetIdMetrics(DateTime startDate, DateTime endDate);
         GetMetricsResult GetVerMetrics(DateTime startDate, DateTime endDate);
